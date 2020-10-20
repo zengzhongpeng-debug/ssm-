@@ -1,0 +1,262 @@
+`ssm``ssm`CREATE DATABASE ssm;
+USE ssm;
+
+CREATE TABLE account(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	NAME VARCHAR(20),
+	money DOUBLE
+
+);
+
+
+
+
+//要按顺序创建，因为外键约束会有影响
+CREATE DATABASE ssm;
+USE ssm;
+
+
+//产品表
+CREATE TABLE product
+(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    productNum VARCHAR(50) UNIQUE NOT NULL,
+    productName VARCHAR(50),
+    cityName VARCHAR(50),
+    DepartureTime TIMESTAMP,
+    productPrice DOUBLE,
+    productDesc VARCHAR(500),
+    productStatus INT
+);
+
+
+//会员表
+CREATE TABLE member(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	NAME VARCHAR(20),
+	nickname VARCHAR(20),
+	phoneNum VARCHAR(20),
+	email VARCHAR(50)
+
+);
+
+//游客表
+CREATE TABLE traveller(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	NAME VARCHAR(20),
+	sex VARCHAR(20),
+	phoneNum VARCHAR(20),
+	credentialsType INT,
+	credentialsNum VARCHAR(50),
+	travellerType INT
+);
+
+
+
+
+//订单表  外键约束
+CREATE TABLE orders(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	orderNum VARCHAR(50) NOT NULL UNIQUE,
+	orderTime TIMESTAMP,
+	peopleCount INT,
+	orderDesc VARCHAR(500),
+	payType INT,
+	orderStatus INT,
+	productId INT,
+	memberId INT,
+	CONSTRAINT order_product FOREIGN KEY (productId) REFERENCES product(id),
+	CONSTRAINT order_member FOREIGN KEY (memberId) REFERENCES member(id)
+);
+
+
+//中间表 主键约束，级联操作
+CREATE TABLE order_traveller(
+	orderId INT,
+	travellerId INT,
+	PRIMARY KEY (orderId,travellerId),
+	FOREIGN KEY (orderId) REFERENCES orders(id),
+	FOREIGN KEY (travellerId) REFERENCES traveller(id)
+	
+);
+
+
+
+//数据插入,要按顺序添加，不然会外键添加失败
+//插入顺序：product --> member --> orders --> traveller --> order_traveller
+
+INSERT INTO product(id,productNum,productname,cityName,DepartureTime,productPrice,productDesc,productStatus)
+VALUE (1,'itcast-002','北京三日游','北京','20181010101000',1200,'不错的旅游',1);
+
+INSERT INTO product(id,productNum,productname,cityName,DepartureTime,productPrice,productDesc,productStatus)
+VALUE (2,'itcast-003','上海五日游','上海','20180425143000',1800,'魔都我来了',0);
+
+INSERT INTO product(id,productNum,productname,cityName,DepartureTime,productPrice,productDesc,productStatus)
+VALUE (3,'itcast-001','北京三日游','北京','20181010101000',1200,'不错的旅游',1);
+
+
+
+
+
+INSERT INTO member (id,NAME,nickname,phoneNum,email)
+VALUES('1','张三','小三','18888888888','zs@163.com');
+
+
+
+
+
+
+INSERT INTO orders (id,ordernum,orderTime,peopleCount,orderdesc,payType,orderStatus,productId,memberId)
+VALUES ('1','12345',20180302120000,2,'没什么',0,1,'1','1');
+
+INSERT INTO orders (id,ordernum,orderTime,peopleCount,orderdesc,payType,orderStatus,productId,memberId)
+VALUES ('2','54321',20180302120000,2,'没什么',0,1,'1','1');
+
+INSERT INTO orders (id,ordernum,orderTime,peopleCount,orderdesc,payType,orderStatus,productId,memberId)
+VALUES ('3','67890',20180302120000,2,'没什么',0,1,'2','1');
+
+INSERT INTO orders (id,ordernum,orderTime,peopleCount,orderdesc,payType,orderStatus,productId,memberId)
+VALUES ('4','98765',20180302120000,2,'没什么',0,1,'2','1');
+
+INSERT INTO orders (id,ordernum,orderTime,peopleCount,orderdesc,payType,orderStatus,productId,memberId)
+VALUES ('5','11111',20180302120000,2,'没什么',0,1,'2','1');
+
+INSERT INTO orders (id,ordernum,orderTime,peopleCount,orderdesc,payType,orderStatus,productId,memberId)
+VALUES ('6','22222',20180302120000,2,'没什么',0,1,'2','1');
+
+INSERT INTO orders (id,ordernum,orderTime,peopleCount,orderdesc,payType,orderStatus,productId,memberId)
+VALUES ('7','33333',20180302120000,2,'没什么',0,1,'3','1');
+
+INSERT INTO orders (id,ordernum,orderTime,peopleCount,orderdesc,payType,orderStatus,productId,memberId)
+VALUES ('8','44444',20180302120000,2,'没什么',0,1,'3','1');
+
+INSERT INTO orders (id,ordernum,orderTime,peopleCount,orderdesc,payType,orderStatus,productId,memberId)
+VALUES ('9','55555',20180302120000,2,'没什么',0,1,'3','1');
+
+
+
+
+INSERT INTO traveller (id,NAME,sex,phoneNum,credentialsType,credentialsNum,travellerType)
+VALUES ('1','张龙','男','13333333333',0,'123456789009876543',0);
+
+INSERT INTO traveller (id,NAME,sex,phoneNum,credentialsType,credentialsNum,travellerType)
+VALUES ('2','张小龙','男','15555555555',0,'987654321123456789',1);
+
+
+
+//中间表的数据添加，要注意两个表的数据都添加成功了，再添加中间表
+INSERT INTO order_traveller(orderid,travellerid)
+VALUE('1','1');
+
+INSERT INTO order_traveller(orderid,travellerid)
+VALUE('3','1');
+
+INSERT INTO order_traveller(orderid,travellerid)
+VALUE('9','2');`order_traveller`
+
+INSERT INTO order_traveller(orderid,travellerid)
+VALUE('7','2');
+
+INSERT INTO order_traveller(orderid,travellerid)
+VALUE('2','1');
+
+INSERT INTO order_traveller(orderid,travellerid)
+VALUE('6','2');
+
+INSERT INTO order_traveller(orderid,travellerid)
+VALUE('4','1');
+
+INSERT INTO order_traveller(orderid,travellerid)
+VALUE('8','2');
+
+INSERT INTO order_traveller(orderid,travellerid)
+VALUE('5','2');
+
+
+
+//权限操作相关的表
+
+CREATE TABLE users(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	email VARCHAR(50) UNIQUE NOT NULL,
+	username VARCHAR(50),
+	PASSWORD VARBINARY(80),
+	phoneNum VARCHAR(20),
+	STATUS INT
+)
+
+CREATE TABLE role(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    roleName VARCHAR(50) ,
+    roleDesc VARCHAR(50)
+)
+
+CREATE TABLE permission(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    permissionName VARCHAR(50) ,
+    url VARCHAR(50)
+)
+
+CREATE TABLE users_role(
+    userId INT,
+    roleId INT,
+    PRIMARY KEY(userId,roleId),
+    FOREIGN KEY (userId) REFERENCES users(id),
+    FOREIGN KEY (roleId) REFERENCES role(id)
+)
+
+CREATE TABLE role_permission(
+    permissionId INT,
+    roleId INT,
+    PRIMARY KEY(permissionId,roleId),
+    FOREIGN KEY (permissionId) REFERENCES permission(id),
+    FOREIGN KEY (roleId) REFERENCES role(id)
+)
+
+
+
+
+
+INSERT INTO users VALUES(1,"20@zzp2233.cn","user","user","130",1);
+INSERT INTO users VALUES(2,"10@zzp2233.cn","admin","admin","130",1);
+INSERT INTO users VALUES(3,"18@zzp2233.cn","hello","hello","130",1);
+
+
+INSERT INTO role VALUES(1,"admin","管理员");
+INSERT INTO role VALUES(2,"user","用户");
+
+
+INSERT INTO users_role VALUES (1,1);
+INSERT INTO users_role VALUES (1,2);
+INSERT INTO users_role VALUES (2,1);
+INSERT INTO users_role VALUES (2,2);
+
+
+INSERT INTO permission VALUES (1,"user.findAll","/user/findAll.do");
+INSERT INTO permission VALUES (2,"member.findAll","/member/findAll.do");
+INSERT INTO permission VALUES (3,"role.findAll","/role/findAll.do");
+
+
+INSERT INTO role_permission VALUES (1,1);
+INSERT INTO role_permission VALUES (1,2);
+INSERT INTO role_permission VALUES (2,1);
+INSERT INTO role_permission VALUES (3,1);
+
+
+AOP日志表
+
+
+CREATE TABLE sysLog(
+
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	visitTime TIMESTAMP,
+	username VARCHAR(50),
+	ip VARCHAR(30),
+	url VARCHAR(50),
+	executionTime INT,
+	method VARCHAR(200)
+)
+
+
+
+
